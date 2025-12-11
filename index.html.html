@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .weather-app {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .app-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 1rem;
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+        }
+        
+        .search-btn {
+            background: #4a9eff;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #3a8eef;
+            transform: scale(1.05);
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+        }
+        
+        .current-weather {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 30px;
+        }
+        
+        .location {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .date-time {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .weather-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .temp {
+            font-size: 5rem;
+            font-weight: 300;
+            margin-right: 20px;
+            line-height: 1;
+        }
+        
+        .weather-icon {
+            font-size: 5rem;
+            margin-right: 20px;
+        }
+        
+        .weather-desc {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .detail-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: #4a9eff;
+        }
+        
+        .detail-text h3 {
+            font-size: 0.9rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .detail-text p {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .forecast-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .forecast-days {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .forecast-day {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .forecast-day:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .day-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .day-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            width: 100px;
+        }
+        
+        .day-icon {
+            font-size: 1.8rem;
+            margin: 0 20px;
+            color: #ffd166;
+        }
+        
+        .day-temp {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .hourly-forecast {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding-bottom: 10px;
+        }
+        
+        .hour-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+        }
+        
+        .hour-time {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .hour-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #ffd166;
+        }
+        
+        .hour-temp {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .app-footer {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .unit-toggle {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .unit-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .unit-btn.active {
+            background: #4a9eff;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .current-weather {
+                padding-right: 0;
+                margin-bottom: 30px;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .temp {
+                font-size: 4rem;
+            }
+            
+            .weather-icon {
+                font-size: 4rem;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .hourly-forecast::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .hourly-forecast::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .hourly-forecast::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        /* Animation for temperature change */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .temp, .weather-desc, .detail-item, .forecast-day, .hour-item {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="weather-app">
+            <div class="app-header">
+                <h1 class="app-title"><i class="fas fa-cloud-sun"></i> Weather Forecast</h1>
+                <div class="search-container">
+                    <input  type="text" class="search-input" placeholder="Search city..." value="New York, USA">
+                    <button class="search-btn" onclick="loaddata(document.querySelector('.search-input').value.trim())">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="current-weather">
+                    <h2 class="location">New York, USA</h2>
+                    <p class="date-time" id="lup">Monday, June 12, 2023 • 2:30 PM</p>
+                    
+                    <div class="weather-info">
+                        <div class="temp" id="temp">22°</div>
+                        <div class="weather-icon">
+                            <img src="" alt="" id="icon">
+                        </div>
+                        <div class="weather-desc" id="fdi">Sunny</div>
+                    </div>
+                    
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <div class="detail-text">
+                                <h3>Wind</h3>
+                                <p id="tyu">12 km/h</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="detail-text">
+                                <h3>Humidity</h3>
+                                <p id="humid">65%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-temperature-high"></i>
+                            </div>
+                            <div class="detail-text">
+                                <h3>Feels Like</h3>
+                                <p id="feelslike">24°</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <div class="detail-text">
+                                <h3>UV Index</h3>
+                                <p id="uv">6 Medium</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="forecast-section">
+                    <h3 class="section-title">3-Day Forecast</h3>
+                    <div class="forecast-days">
+                        <div class="forecast-day">
+                            <div class="day-info">
+                                <span class="day-name">Tomorrow</span>
+                                <div class="day-icon"><i class="fas fa-cloud-sun"></i></div>
+                                <span class="weather-desc">Partly Cloudy</span>
+                            </div>
+                            <div class="day-temp">21° / 16°</div>
+                        </div>
+                        
+                        <div class="forecast-day">
+                            <div class="day-info">
+                                <span class="day-name">Wednesday</span>
+                                <div class="day-icon"><i class="fas fa-cloud-rain"></i></div>
+                                <span class="weather-desc">Light Rain</span>
+                            </div>
+                            <div class="day-temp">19° / 14°</div>
+                        </div>
+                        
+                        <div class="forecast-day">
+                            <div class="day-info">
+                                <span class="day-name">Thursday</span>
+                                <div class="day-icon"><i class="fas fa-cloud"></i></div>
+                                <span class="weather-desc">Cloudy</span>
+                            </div>
+                            <div class="day-temp">18° / 13°</div>
+                        </div>
+                        
+                        <div class="forecast-day">
+                            <div class="day-info">
+                                <span class="day-name">Friday</span>
+                                <div class="day-icon"><i class="fas fa-sun"></i></div>
+                                <span class="weather-desc" id="fdi">Sunny</span>
+                            </div>
+                            <div class="day-temp">23° / 17°</div>
+                        </div>
+                        
+                        <div class="forecast-day">
+                            <div class="day-info">
+                                <span class="day-name">Saturday</span>
+                                <div class="day-icon"><i class="fas fa-cloud-sun"></i></div>
+                                <span class="weather-desc">Partly Cloudy</span>
+                            </div>
+                            <div class="day-temp">22° / 16°</div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="section-title">Hourly Forecast</h3>
+                    <div class="hourly-forecast">
+                        <div class="hour-item">
+                            <div class="hour-time">Now</div>
+                            <div class="hour-icon"><i class="fas fa-sun"></i></div>
+                            <div class="hour-temp">22°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">3 PM</div>
+                            <div class="hour-icon"><i class="fas fa-sun"></i></div>
+                            <div class="hour-temp">23°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">4 PM</div>
+                            <div class="hour-icon"><i class="fas fa-sun"></i></div>
+                            <div class="hour-temp">23°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">5 PM</div>
+                            <div class="hour-icon"><i class="fas fa-cloud-sun"></i></div>
+                            <div class="hour-temp">22°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">6 PM</div>
+                            <div class="hour-icon"><i class="fas fa-cloud-sun"></i></div>
+                            <div class="hour-temp">21°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">7 PM</div>
+                            <div class="hour-icon"><i class="fas fa-cloud"></i></div>
+                            <div class="hour-temp">20°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">8 PM</div>
+                            <div class="hour-icon"><i class="fas fa-cloud"></i></div>
+                            <div class="hour-temp">19°</div>
+                        </div>
+                        
+                        <div class="hour-item">
+                            <div class="hour-time">9 PM</div>
+                            <div class="hour-icon"><i class="fas fa-cloud"></i></div>
+                            <div class="hour-temp">18°</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="app-footer">
+                <div class="last-updated">Last updated: 2:25 PM</div>
+                <div class="unit-toggle">
+                    <button class="unit-btn active">°C</button>
+                    <button class="unit-btn">°F</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loaddata(q) {
+            let place = q ? q : 'Abuja';
+            const key = '6b913588c4c34d71aaa82312250205';
+            let url = `https://api.weatherapi.com/v1/forecast.json?key=6b913588c4c34d71aaa82312250205&q=${place}&days=3&aqi=yes&alerts=yes`
+            let req = await fetch(url);
+            let response = await req.json();
+            let flocation = response.location;
+            let current = response.current;
+            let condition = current.condition;
+            let allDays = response.forecast.forecastday;
+            let today = allDays[0].hour;
+            let days_ui = ''
+            allDays.forEach(d=>{
+                days_ui += ` <div class="forecast-day">
+                            <div class="d-flex w-100 content justify-content-between align-items-center">
+                                <span class="small">${d.date}</span>
+                                <img src="${d.day.condition.icon}" alt = "">
+                                <span class="small"> ${d.day.condition.text}</span>
+                                  <span class="small">${d.day.maxtemp_c}° / ${d.day.mintemp_c}°</span>
+                            </div>
+                           
+                        </div>
+`
+                
+            })
+            hour = ''
+            today.forEach(t=>{
+                hour += `
+                        <div class="hour-item">
+                            <div class="hour-time">${t.time.split('')[1]}</div>
+                            <div class="hour-icon"><img src="${t.condition.icon}" alt=""></div>
+                            <div class="hour-temp">${t.temp_c}°</div>
+                        </div>`
+                
+            })
+            document.querySelector('.hourly-forecast').innerHTML = hour;
+            document.querySelector('.forecast-days').innerHTML = days_ui;
+
+
+            document.querySelector('.location').innerHTML = `${flocation.name} - ${flocation.country}`
+            document.querySelector('#icon').src = condition.icon
+            document.querySelector('#temp').innerHTML =`${current.temp_c}°`
+            document.querySelector('#lup').innerHTML =`${current.last_updated}`
+            document.querySelector('#fdi').innerHTML =`${condition.text}`
+            document.querySelector('#tyu').innerHTML =`${current.wind_kph}`
+            document.querySelector('#humid').innerHTML =`${current.humidity}`
+             document.querySelector('#feelslike').innerHTML =`${current.feelslike_c}`
+            document.querySelector('#uv').innerHTML =`${current.uv}`
+
+
+            
+        }
+     if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition((position)=>{
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+            loaddata(`${lat},${lon}`);
+        })
+
+     }else{
+        loaddata('Abuja');
+     }
+    </script>
+</body>
+</html>
